@@ -1,0 +1,12 @@
+sh_test(
+    name = "busybox_test",
+    srcs = ["check.sh"],
+    data = [
+        "//third_party/busybox:busybox.aarch64.elf",
+        "//third_party/busybox:busybox.x86_64.elf",
+    ],
+    args = [
+        "$(rootpath //third_party/busybox:busybox.x86_64.elf)",
+        "$(rootpath //third_party/busybox:busybox.aarch64.elf)",
+    ],
+)

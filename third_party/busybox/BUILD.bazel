@@ -1,27 +1,66 @@
-exports_files(["bone.fragment"])
+package(default_visibility = ["//visibility:public"])
 
-# defconfig + bone.fragment -> .config, with the timestamp line removed so output is deterministic.
+exports_files([
+    "bone.fragment",
+    "bone_linux_consts.h",
+    "build.sh",
+    "mkconfig.sh",
+])
+
+# allnoconfig + bone.fragment, generated in the bone-build container; timestamp removed for determinism.
 genrule(
     name = "config",
     srcs = [
         "bone.fragment",
+        "mkconfig.sh",
         "@busybox//:all_files",
+        "//tools:dockerrun.sh",
     ],
     outs = ["busybox.config"],
     cmd = """
 set -eu
 tmp=$$(mktemp -d)
-src=$$(dirname $$(echo $(locations @busybox//:all_files) | tr ' ' '\\n' | grep '/Makefile$$' | head -1))
-cp -rL "$$src/." "$$tmp/"
+src=$$(dirname $$(readlink -f $$(echo $(locations @busybox//:all_files) | tr ' ' '\\n' | grep '/Makefile$$' | head -1)))
+cp -r "$$src/." "$$tmp/"
 chmod -R u+w "$$tmp"
-make -C "$$tmp" -s defconfig >/dev/null
-grep -v '^# Overrides' $(location bone.fragment) | while read -r l; do
-  k=$$(echo "$$l" | sed -E 's/^# //; s/[ =].*//')
-  sed -i -E "/^(# )?$$k[= ]/d" "$$tmp/.config"
-  echo "$$l" >> "$$tmp/.config"
-done
-make -C "$$tmp" -s oldconfig </dev/null >/dev/null
-grep -v -E '^# [A-Z][a-z]{2} [A-Z][a-z]{2} ' "$$tmp/.config" > $@
+$(location //tools:dockerrun.sh) "$$tmp:/w" "$$(readlink -f $(location bone.fragment)):/frag:ro" "$$(readlink -f $(location mkconfig.sh)):/mkconfig.sh:ro" -- sh /mkconfig.sh
+cp "$$tmp/.config.clean" $@
 rm -rf "$$tmp"
 """,
+    tags = ["local", "no-cache"],
+)
+
+# Fat APE busybox plus the per-arch ELFs it was linked from.
+genrule(
+    name = "busybox",
+    srcs = [
+        "busybox.config",
+        "bone_linux_consts.h",
+        "build.sh",
+        "@busybox//:all_files",
+        "@cosmocc//:all_files",
+        "//tools:dockerrun.sh",
+    ],
+    outs = [
+        "busybox.com",
+        "busybox.x86_64.elf",
+        "busybox.aarch64.elf",
+    ],
+    cmd = """
+set -eu
+tmp=$$(mktemp -d)
+src=$$(dirname $$(readlink -f $$(echo $(locations @busybox//:all_files) | tr ' ' '\\n' | grep '/Makefile$$' | head -1)))
+cc=$$(dirname $$(dirname $$(readlink -f $$(echo $(locations @cosmocc//:all_files) | tr ' ' '\\n' | grep '/bin/cosmocc$$' | head -1))))
+$(location //tools:dockerrun.sh) \\
+  "$$src:/src:ro" "$$cc:/cosmocc:ro" \\
+  "$$(readlink -f $(location busybox.config)):/config:ro" \\
+  "$$(readlink -f $(location bone_linux_consts.h)):/consts.h:ro" \\
+  "$$(readlink -f $(location build.sh)):/build.sh:ro" \\
+  "$$tmp:/out" -- sh /build.sh
+cp "$$tmp/busybox" $(location busybox.com)
+cp "$$tmp/busybox.x86_64.elf" $(location busybox.x86_64.elf)
+cp "$$tmp/busybox.aarch64.elf" $(location busybox.aarch64.elf)
+rm -rf "$$tmp"
+""",
+    tags = ["local", "no-cache"],
 )

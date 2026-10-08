@@ -28,6 +28,21 @@ output. A split compile/link `cc_toolchain` would lose them in Bazel's sandbox, 
 through `cosmo_cc_binary` (compile + link in one declared-output action). Busybox (M5) follows the
 same pattern: one action runs the whole make. A real `cc_toolchain` can come later if needed.
 
+## Decision (M5): per-arch builds in Docker, then apelink
+
+Busybox's kbuild partial-links with `$(CC) -nostdlib -r`, which the fat `cosmocc` wrapper rejects. So busybox is built
+twice, once per arch, with `ARCH-unknown-cosmo-cc` / `ARCH-linux-cosmo-ld`, inside the `bone-build` Docker image
+(`docker/Dockerfile`, Debian bookworm + make/gcc/bzip2; host tools such as kconfig use its gcc). `apelink` then fuses the two
+ELFs. Build actions are tagged `local` because they call `docker`.
+
+- No busybox source patches. `third_party/busybox/bone_linux_consts.h` is force-included (`CONFIG_EXTRA_CFLAGS`) and pins the
+  Linux values of signals and AF_/SOCK_ constants, which cosmo otherwise resolves at runtime. It also adds a label to asm files
+  whose body is `#if`-ed out (cosmocc rejects symbol-less objects). Valid because bone is Linux-only.
+- Config is `allnoconfig` + `bone.fragment`, not `defconfig`: cosmo's libc has no `linux/*.h`, so most networking and
+  util-linux applets cannot build. Applets are added to the fragment one at a time as they are verified.
+- Risk 4 outcome: the fused APE `.com` needs the APE loader (`~/.ape-*`) which failed on the Linux host and in the container.
+  The per-arch plain ELFs (`busybox.x86_64.elf`, `busybox.aarch64.elf`) run directly, so the image uses those.
+
 ## Known risks (verified at the milestone that exercises them)
 
 1. Busybox may not build cleanly under cosmocc for every applet. M3 finds the working set;

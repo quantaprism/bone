@@ -1,4 +1,23 @@
-# Overrides applied on top of `make defconfig`. Applet pruning for cosmocc happens in M5.
+# Applied on top of `make allnoconfig`. Only applets that build under cosmocc (no Linux kernel headers).
 CONFIG_STATIC=y
-# CONFIG_PIE is not set
-# CONFIG_SELINUX is not set
+CONFIG_BUSYBOX=y
+CONFIG_FEATURE_INSTALLER=y
+CONFIG_BASENAME=y
+CONFIG_CAT=y
+CONFIG_CP=y
+CONFIG_ECHO=y
+CONFIG_FALSE=y
+CONFIG_HEAD=y
+CONFIG_LN=y
+CONFIG_LS=y
+CONFIG_MKDIR=y
+CONFIG_MV=y
+CONFIG_PRINTF=y
+CONFIG_RM=y
+CONFIG_SLEEP=y
+CONFIG_SORT=y
+CONFIG_TAIL=y
+CONFIG_TEST=y
+CONFIG_TRUE=y
+CONFIG_UNAME=y
+CONFIG_WC=y

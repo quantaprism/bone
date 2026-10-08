@@ -37,3 +37,11 @@ One entry per milestone: what changed, what was verified, plan changes.
 - Verified (Linux x86_64 host): two runs (second with cache disabled) give sha256 0a1c8a75…333a. Fragment takes effect (STATIC=y, PIE/SELINUX off).
 - Host change: development moved to a Linux x86_64 host, so no VM is needed for M5; bazelisk linux-amd64 checksum pinned.
 - Note: the genrule uses host `make`/`gcc` for kconfig (not hermetic); acceptable for config generation only.
+
+## M5 — busybox built with cosmocc
+- Added docker/Dockerfile, tools/dockerrun.sh, third_party/busybox/{build.sh,mkconfig.sh,bone_linux_consts.h}, `//third_party/busybox:busybox`.
+- Config switched to allnoconfig + fragment (defconfig fails: no linux/*.h, networking/util-linux applets). 21 applets enabled.
+- Plan change: per-arch builds + apelink, see DESIGN.md "Decision (M5)".
+- Verified: `bazel test //tests/busybox:busybox_test` PASSED: both ELFs have the right e_machine; x86_64 ELF `--list`, echo, sort, uname -m run on Linux x86_64.
+- NOT verified: executing the aarch64 ELF (no qemu-user here) and the fat APE (loader fails here). Planned for M9 (QEMU).
+- Known: a `limits_tbl` initializer warning (ALIGN2) appears in the build; not yet checked at runtime.
