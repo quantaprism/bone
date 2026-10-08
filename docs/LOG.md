@@ -13,3 +13,10 @@ One entry per milestone: what changed, what was verified, plan changes.
   other hosts print a warning until their checksum is added). The binary itself is git-ignored.
 - Finding: bazelisk ignores .bazelversion until MODULE.bazel exists (it picked 9.3.0 before).
 - Verified: `./tools/bazel build //...` succeeds with Bazel 8.5.1 (see clean-clone check below).
+
+## M2 — pinned cosmocc fetch
+- MODULE.bazel: http_archive @cosmocc = cosmocc-4.0.2.zip, sha256 85b8c37a…3f44 (442 MB).
+- //toolchains:cosmocc_version runs the fetched cosmocc.
+- Verified: `./tools/bazel run //toolchains:cosmocc_version` -> "cosmocc (GCC) 14.1.0" on macOS arm64.
+- Note: the APE compiler runs on macOS arm64 from the Bazel external repo with no extra setup, but this
+  was a non-sandboxed `run`. Sandboxed actions (M3) may need HOME/ape-loader handling; recorded as risk 2.

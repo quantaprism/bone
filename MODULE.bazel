@@ -3,3 +3,13 @@ module(
     version = "0.0.1",
     bazel_compatibility = [">=8.5.1", "<=8.5.1"],
 )
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# Cosmopolitan toolchain: one APE binary carries x86_64 + aarch64.
+http_archive(
+    name = "cosmocc",
+    build_file = "//toolchains:cosmocc.BUILD",
+    sha256 = "85b8c37a406d862e656ad4ec14be9f6ce474c1b436b9615e91a55208aced3f44",
+    urls = ["https://github.com/jart/cosmopolitan/releases/download/4.0.2/cosmocc-4.0.2.zip"],
+)

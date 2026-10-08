@@ -1,0 +1,6 @@
+# M2: prove the pinned cosmocc is fetched and runnable.
+sh_binary(
+    name = "cosmocc_version",
+    srcs = ["cosmocc_version.sh"],
+    data = ["@cosmocc//:all_files"],
+)
