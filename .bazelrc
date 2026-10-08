@@ -1,0 +1,5 @@
+# Common flags for all bone builds.
+common --enable_bzlmod
+build --incompatible_strict_action_env
+build --disk_cache=.cache/bazel-disk
+try-import %workspace%/user.bazelrc

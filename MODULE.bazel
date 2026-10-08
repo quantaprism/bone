@@ -1,0 +1,5 @@
+module(
+    name = "bone",
+    version = "0.0.1",
+    bazel_compatibility = [">=8.5.1", "<=8.5.1"],
+)

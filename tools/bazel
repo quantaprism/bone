@@ -1,0 +1,4 @@
+#!/bin/sh
+# Wrapper: ./tools/bazel <args>. Honours .bazelversion via bazelisk.
+dir=$(cd "$(dirname "$0")" && pwd)
+"$dir/get-bazelisk.sh" && exec "$dir/bazelisk" "$@"

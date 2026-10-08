@@ -1,0 +1,6 @@
+# M1 placeholder target: proves the Bazel scaffold builds from a clean checkout.
+genrule(
+    name = "hello",
+    outs = ["hello.txt"],
+    cmd = "echo 'bone scaffold ok' > $@",
+)

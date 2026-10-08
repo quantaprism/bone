@@ -2,3 +2,4 @@ bazel-*
 .DS_Store
 .cache/
 user.bazelrc
+tools/bazelisk
