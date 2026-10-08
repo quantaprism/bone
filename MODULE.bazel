@@ -13,3 +13,11 @@ http_archive(
     sha256 = "85b8c37a406d862e656ad4ec14be9f6ce474c1b436b9615e91a55208aced3f44",
     urls = ["https://github.com/jart/cosmopolitan/releases/download/4.0.2/cosmocc-4.0.2.zip"],
 )
+
+http_archive(
+    name = "busybox",
+    build_file = "//third_party/busybox:busybox.BUILD",
+    sha256 = "b8cc24c9574d809e7279c3be349795c5d5ceb6fdf19ca709f80cde50e47de314",
+    strip_prefix = "busybox-1.36.1",
+    urls = ["https://busybox.net/downloads/busybox-1.36.1.tar.bz2"],
+)

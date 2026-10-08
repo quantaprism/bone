@@ -1,0 +1,4 @@
+# Overrides applied on top of `make defconfig`. Applet pruning for cosmocc happens in M5.
+CONFIG_STATIC=y
+# CONFIG_PIE is not set
+# CONFIG_SELINUX is not set

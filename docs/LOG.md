@@ -30,3 +30,10 @@ One entry per milestone: what changed, what was verified, plan changes.
 - NOT verified: executing the x86_64 payload. `arch -x86_64 ./hello` still ran the arm64 side on macOS.
   x86_64 execution is covered in the Linux VM / QEMU milestones.
 - Lima 2.2.1 installed via Homebrew for the Linux build environment (M5).
+
+## M4 — busybox source + config
+- MODULE.bazel: http_archive @busybox = busybox-1.36.1.tar.bz2, sha256 b8cc24c9…e314.
+- third_party/busybox: `bone.fragment` (overrides) + `//third_party/busybox:config` genrule = `make defconfig` + fragment + `oldconfig`, timestamp line stripped.
+- Verified (Linux x86_64 host): two runs (second with cache disabled) give sha256 0a1c8a75…333a. Fragment takes effect (STATIC=y, PIE/SELINUX off).
+- Host change: development moved to a Linux x86_64 host, so no VM is needed for M5; bazelisk linux-amd64 checksum pinned.
+- Note: the genrule uses host `make`/`gcc` for kconfig (not hermetic); acceptable for config generation only.

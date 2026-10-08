@@ -1,0 +1,27 @@
+exports_files(["bone.fragment"])
+
+# defconfig + bone.fragment -> .config, with the timestamp line removed so output is deterministic.
+genrule(
+    name = "config",
+    srcs = [
+        "bone.fragment",
+        "@busybox//:all_files",
+    ],
+    outs = ["busybox.config"],
+    cmd = """
+set -eu
+tmp=$$(mktemp -d)
+src=$$(dirname $$(echo $(locations @busybox//:all_files) | tr ' ' '\\n' | grep '/Makefile$$' | head -1))
+cp -rL "$$src/." "$$tmp/"
+chmod -R u+w "$$tmp"
+make -C "$$tmp" -s defconfig >/dev/null
+grep -v '^# Overrides' $(location bone.fragment) | while read -r l; do
+  k=$$(echo "$$l" | sed -E 's/^# //; s/[ =].*//')
+  sed -i -E "/^(# )?$$k[= ]/d" "$$tmp/.config"
+  echo "$$l" >> "$$tmp/.config"
+done
+make -C "$$tmp" -s oldconfig </dev/null >/dev/null
+grep -v -E '^# [A-Z][a-z]{2} [A-Z][a-z]{2} ' "$$tmp/.config" > $@
+rm -rf "$$tmp"
+""",
+)
