@@ -7,6 +7,7 @@ os=$(uname -s | tr A-Z a-z); arch=$(uname -m)
 case "$arch" in x86_64) arch=amd64 ;; aarch64|arm64) arch=arm64 ;; esac
 case "$os-$arch" in
   darwin-arm64) sha=cee851f726789227d5561004e9904a52be45c3efb56f8b38b6993d6adbaa0409 ;;
+  linux-amd64) sha=5a408715e932c0250d28bd84555f12edbf70117de42f9181691c736eacc4a992 ;;
   *) sha="" ;;  # TODO: add checksums for other hosts when first used
 esac
 out="$dir/bazelisk"
