@@ -20,3 +20,13 @@ One entry per milestone: what changed, what was verified, plan changes.
 - Verified: `./tools/bazel run //toolchains:cosmocc_version` -> "cosmocc (GCC) 14.1.0" on macOS arm64.
 - Note: the APE compiler runs on macOS arm64 from the Bazel external repo with no extra setup, but this
   was a non-sandboxed `run`. Sandboxed actions (M3) may need HOME/ape-loader handling; recorded as risk 2.
+
+## M3 — cosmocc as a hermetic action + hello-world
+- Added toolchains/cosmo.bzl (`cosmo_cc_binary`), tests/hello (C source, per-arch filegroups, sh_test).
+- Plan change: no registered cc_toolchain (see DESIGN.md "Decision (M3)").
+- cosmocc output files: `<out>` (APE), `<out>.com.dbg` (x86_64 ELF), `<out>.aarch64.elf` (aarch64 ELF).
+- Verified: sandboxed build works on macOS arm64 (HOME/TMPDIR pointed at a temp dir, no loader issues);
+  `bazel test //tests/hello:hello_test` PASSED (runs; e_machine 0x3e and 0xb7 payloads present).
+- NOT verified: executing the x86_64 payload. `arch -x86_64 ./hello` still ran the arm64 side on macOS.
+  x86_64 execution is covered in the Linux VM / QEMU milestones.
+- Lima 2.2.1 installed via Homebrew for the Linux build environment (M5).

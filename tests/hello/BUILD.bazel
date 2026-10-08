@@ -1,0 +1,34 @@
+load("//toolchains:cosmo.bzl", "cosmo_cc_binary")
+
+cosmo_cc_binary(
+    name = "hello",
+    srcs = ["hello.c"],
+)
+
+# Per-architecture ELF payloads of the fat binary.
+filegroup(
+    name = "hello_x86_64",
+    srcs = [":hello"],
+    output_group = "x86_64",
+)
+
+filegroup(
+    name = "hello_aarch64",
+    srcs = [":hello"],
+    output_group = "aarch64",
+)
+
+sh_test(
+    name = "hello_test",
+    srcs = ["check.sh"],
+    args = [
+        "$(location :hello)",
+        "$(location :hello_x86_64)",
+        "$(location :hello_aarch64)",
+    ],
+    data = [
+        ":hello",
+        ":hello_aarch64",
+        ":hello_x86_64",
+    ],
+)

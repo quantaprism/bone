@@ -21,6 +21,13 @@ Out (later): syncd/SAI over gRPC, orchestrator, FRR, PMON.
 | Packaging | rules_pkg tar -> squashfs rootfs -> sharch ONIE installer | Mirrors SONiC's installer layout |
 | Test | QEMU + ONIE KVM image | No hardware needed |
 
+## Decision (M3): no registered cc_toolchain
+
+cosmocc builds both architectures in one invocation and leaves per-arch intermediates next to the
+output. A split compile/link `cc_toolchain` would lose them in Bazel's sandbox, so cosmocc is used
+through `cosmo_cc_binary` (compile + link in one declared-output action). Busybox (M5) follows the
+same pattern: one action runs the whole make. A real `cc_toolchain` can come later if needed.
+
 ## Known risks (verified at the milestone that exercises them)
 
 1. Busybox may not build cleanly under cosmocc for every applet. M3 finds the working set;
@@ -40,7 +47,7 @@ Out (later): syncd/SAI over gRPC, orchestrator, FRR, PMON.
 | 0 | Design doc + repo skeleton | Doc reviewed |
 | 1 | Bazel scaffold: `.bazelversion`, `MODULE.bazel`, `.bazelrc`, a trivial target | `bazel build //...` succeeds on a clean checkout |
 | 2 | Fetch cosmocc with `http_archive` (pinned sha256) | `bazel run //toolchains:cosmocc_version` prints the expected version |
-| 3 | `cc_toolchain` for cosmocc + a hello-world `cc_binary` | Output runs; `file` shows an APE binary; runs on x86_64 and aarch64 |
+| 3 | `cosmo_cc_binary` rule (single-action cosmocc) + hello-world | `bazel test //tests/hello:hello_test`: runs, and both x86_64 and aarch64 ELF payloads present |
 | 4 | Fetch busybox source + `defconfig`-derived config fragment | Config generation is deterministic (same hash on two runs) |
 | 5 | Build busybox with the cosmo toolchain | `busybox --list` works; chosen applets execute |
 | 6 | Smoke test target (`bazel test`) for the applets | Test passes in CI mode |
