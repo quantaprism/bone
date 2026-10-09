@@ -45,3 +45,10 @@ One entry per milestone: what changed, what was verified, plan changes.
 - Verified: `bazel test //tests/busybox:busybox_test` PASSED: both ELFs have the right e_machine; x86_64 ELF `--list`, echo, sort, uname -m run on Linux x86_64.
 - NOT verified: executing the aarch64 ELF (no qemu-user here) and the fat APE (loader fails here). Planned for M9 (QEMU).
 - Known: a `limits_tbl` initializer warning (ALIGN2) appears in the build; not yet checked at runtime.
+
+## M6 — Linux kernel 6.1.62 source
+- MODULE.bazel: http_archive @linux = linux-6.1.62.tar.xz, sha256 b9fd616f…85ec.
+- tests/linux: sh_test checks that @linux//:all_files contains valid kernel source (Makefile, arch/, drivers/, etc.).
+- Verified: `bazel test //tests/linux:linux_fetch_test` PASSED. Fetch works on Linux x86_64.
+- NOT verified: kernel configuration or compilation (deferred to M7, rootfs packing).
+- Plan change: full kernel build is complex in Bazel sandbox; will use Docker in M7 like busybox does.

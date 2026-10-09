@@ -1,0 +1,8 @@
+"""M6: Linux kernel source fetch + validation."""
+
+sh_test(
+    name = "linux_fetch_test",
+    srcs = ["check.sh"],
+    data = ["@linux//:all_files"],
+    tags = ["local"],
+)
