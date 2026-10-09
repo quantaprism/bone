@@ -1,0 +1,40 @@
+"""M8: ONIE installer creation (placeholder).
+
+Creates a sharch (shell archive) installer template compatible with ONIE
+(Open Network Install Environment). The installer is a self-extracting script
+that will embed the rootfs tar payload once M7-extended completes tar packing.
+
+For M8, this is the installer script framework without payload.
+Actual payload integration happens in M8-extended.
+"""
+
+# ONIE installer script template
+exports_files([
+    "bone-installer.sh.in",
+])
+
+# Make installer executable via genrule
+genrule(
+    name = "installer",
+    srcs = ["bone-installer.sh.in"],
+    outs = ["bone_installer.sh"],
+    cmd = "cat $(location bone-installer.sh.in) > $@",
+    tags = ["local"],
+)
+
+# Validation test for installer
+sh_test(
+    name = "installer_test",
+    srcs = ["check.sh"],
+    data = [":installer"],
+    args = ["$(location :installer)"],
+    tags = ["local"],
+)
+
+# Filegroup for easier access to built installer
+filegroup(
+    name = "installer_bin",
+    srcs = [":installer"],
+    visibility = ["//visibility:public"],
+)
+

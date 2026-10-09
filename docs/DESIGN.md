@@ -70,6 +70,7 @@ ELFs. Build actions are tagged `local` because they call `docker`.
 | 7 | Rootfs tar + squashfs | Squashfs lists expected tree; reproducible hash |
 | 7 | Rootfs tar (Linux + busybox) | Source + binaries combined into deployable image |
 | 8 | ONIE installer (sharch) | Installer self-checksum verifies; payload extracts |
+| 8 | ONIE installer (sharch) | Self-extracting shell archive installer |
 | 9 | QEMU + ONIE KVM test | `onie-nos-install` completes; image boots to busybox shell |
 
 Each milestone ends with a short entry in `docs/LOG.md`: what changed, what was verified, and any

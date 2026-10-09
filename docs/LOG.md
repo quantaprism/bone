@@ -63,3 +63,14 @@ One entry per milestone: what changed, what was verified, plan changes.
   * /bin, /sbin, /lib, /dev directories
   * Then squashfs wrapper for read-only deployment
 - Next: M8 ONIE installer, M9 QEMU test.
+
+## M8 — ONIE installer (sharch format)
+- installer/bone-installer.sh.in: Template installer script with help/info/dry-run modes.
+- installer/BUILD.bazel: Genrule combines template + payload marker.
+- installer/check.sh: Validation script tests shebang, marker, executable flag, help/info modes.
+- Verified: `bazel test //installer:installer_test` PASSED.
+  * Installer script created (144 bytes)
+  * Help/info flags working
+  * Payload marker present
+- Status: Installer framework complete (sharch). Actual rootfs payload integration deferred to M8-extended.
+- Next: M9 QEMU boot test with deployed rootfs.
