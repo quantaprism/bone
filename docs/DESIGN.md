@@ -68,6 +68,7 @@ ELFs. Build actions are tagged `local` because they call `docker`.
 | 6 | Smoke test target (`bazel test`) for the applets | Test passes in CI mode |
 | 6 | Linux 6.1.62 fetch + validation | Linux kernel source can be fetched; key directories present |
 | 7 | Rootfs tar + squashfs | Squashfs lists expected tree; reproducible hash |
+| 7 | Rootfs tar (Linux + busybox) | Source + binaries combined into deployable image |
 | 8 | ONIE installer (sharch) | Installer self-checksum verifies; payload extracts |
 | 9 | QEMU + ONIE KVM test | `onie-nos-install` completes; image boots to busybox shell |
 

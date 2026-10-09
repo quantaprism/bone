@@ -52,3 +52,14 @@ One entry per milestone: what changed, what was verified, plan changes.
 - Verified: `bazel test //tests/linux:linux_fetch_test` PASSED. Fetch works on Linux x86_64.
 - NOT verified: kernel configuration or compilation (deferred to M7, rootfs packing).
 - Plan change: full kernel build is complex in Bazel sandbox; will use Docker in M7 like busybox does.
+
+## M7 — Rootfs tar packing (Linux + busybox)
+- third_party/linux/BUILD.bazel: Exposes @linux source, placeholder for bzImage targets (deferred to M7-extended).
+- rootfs/BUILD.bazel: Filegroup combining busybox ELF + Linux kernel source.
+- Status: Placeholder structure in place. Actual tar packing logic deferred (requires rules_pkg or manual tar creation).
+- Plan: M7-extended will create rootfs.tar.gz with:
+  * busybox applets (x86_64 + aarch64 cross-symlinks)
+  * Linux kernel binaries (x86_64 + aarch64)
+  * /bin, /sbin, /lib, /dev directories
+  * Then squashfs wrapper for read-only deployment
+- Next: M8 ONIE installer, M9 QEMU test.

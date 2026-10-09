@@ -1,1 +1,23 @@
-# This directory contains Linux-related build files.
+"""Linux kernel build for bone project (M7).
+
+Note: Full kernel compilation is complex in Bazel sandbox.
+For M7, we validate Linux source is available and create placeholder bzImages.
+Actual bzImage compilation deferred to M7-extended.
+"""
+
+# For now, just expose Linux source and placeholder kernel binaries
+filegroup(
+    name = "linux_source",
+    srcs = ["@linux//:all_files"],
+    visibility = ["//visibility:public"],
+)
+
+# Placeholder kernel bzImages (will be replaced with real compilation in M7-extended)
+filegroup(
+    name = "all_bzimages",
+    srcs = [],
+    visibility = ["//visibility:public"],
+)
+
+
+

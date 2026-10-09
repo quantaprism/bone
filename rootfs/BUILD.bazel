@@ -1,0 +1,16 @@
+"""M7: Rootfs tar image creation.
+
+Combines busybox + Linux kernel into a root filesystem.
+Packaged as squashfs for deployment.
+"""
+
+# Target for rootfs tarball (contains busybox + linux kernel)
+# This is a placeholder for now - real implementation in M7-extended
+filegroup(
+    name = "rootfs",
+    srcs = [
+        "//third_party/busybox:busybox.x86_64.elf",
+        "//third_party/linux:linux_source",
+    ],
+    visibility = ["//visibility:public"],
+)

@@ -1,0 +1,34 @@
+# Minimal Linux 6.1 kernel config for bone project
+# Base: allnoconfig
+# Features: Boot/init only, no drivers needed (will be in userspace via busybox)
+
+CONFIG_64BIT=y
+CONFIG_X86_64=y
+CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS=y
+
+# Essential init/boot
+CONFIG_BLK_DEV_INITRD=y
+CONFIG_RD_GZIP=y
+CONFIG_CONSOLE_LOGLEVEL_DEFAULT=7
+CONFIG_PRINTK=y
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_VT=y
+CONFIG_VT_CONSOLE=y
+
+# Needed for basic functionality
+CONFIG_EXT4_FS=y
+CONFIG_EXT4_FS_POSIX_ACL=y
+CONFIG_PROC_FS=y
+CONFIG_SYSFS=y
+CONFIG_TMPFS=y
+CONFIG_TMPFS_POSIX_ACL=y
+
+# For init/systemd compatibility
+CONFIG_UNIX=y
+CONFIG_INET=y
+CONFIG_UEVENT_HELPER=y
+
+# Debugging
+CONFIG_EARLY_PRINTK=y
+CONFIG_DEBUG_KERNEL=n
