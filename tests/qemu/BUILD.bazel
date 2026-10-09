@@ -1,0 +1,13 @@
+"""M9: QEMU boot test for bone rootfs.
+
+Tests that bone can boot in QEMU emulator and basic system functionality works.
+This validates the complete stack: kernel + rootfs + busybox.
+"""
+
+sh_test(
+    name = "qemu_boot_test",
+    srcs = ["check.sh"],
+    data = ["qemu_boot_test.sh"],
+    args = ["$(location qemu_boot_test.sh)"],
+    tags = ["local", "manual"],  # Manual because it requires QEMU and time
+)
